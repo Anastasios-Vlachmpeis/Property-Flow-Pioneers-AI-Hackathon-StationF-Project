@@ -23,6 +23,8 @@ export function ListingFormDialog({ open, onOpenChange, listing, onSave }: Listi
     title: listing?.title || '',
     location: listing?.location || '',
     maxGuests: listing?.maxGuests || 2,
+    bedrooms: listing?.bedrooms || 1,
+    beds: listing?.beds || 1,
     description: listing?.description || '',
     amenities: listing?.amenities || [],
     airbnbPrice: listing?.airbnbPrice || 0,
@@ -204,6 +206,34 @@ export function ListingFormDialog({ open, onOpenChange, listing, onSave }: Listi
                 placeholder="e.g., 4"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="bedrooms">Bedrooms *</Label>
+                <Input
+                  id="bedrooms"
+                  type="number"
+                  min="1"
+                  value={formData.bedrooms}
+                  onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: parseInt(e.target.value) || 1 }))}
+                  placeholder="e.g., 2"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="beds">Beds *</Label>
+                <Input
+                  id="beds"
+                  type="number"
+                  min="1"
+                  value={formData.beds}
+                  onChange={(e) => setFormData(prev => ({ ...prev, beds: parseInt(e.target.value) || 1 }))}
+                  placeholder="e.g., 3"
+                  required
+                />
+              </div>
             </div>
 
             <div>
