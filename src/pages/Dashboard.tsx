@@ -34,6 +34,17 @@ export default function Dashboard() {
     listings.forEach((listing) => {
       if (!listing.availability) return;
       
+      // Accumulate monthly revenue per night
+      listing.availability.forEach((a) => {
+        if (!a.bookedBy) return;
+        const d = parseISO(a.date);
+        const price = a.bookedBy === 'airbnb' ? listing.airbnbPrice :
+                      a.bookedBy === 'booking' ? listing.bookingPrice :
+                      listing.vrboPrice;
+        if (d >= firstDayThisMonth && d <= today) thisMonthRevenue += price;
+        else if (d >= firstDayLastMonth && d <= lastDayLastMonth) lastMonthRevenue += price;
+      });
+
       // Group bookings by guest and platform to count unique reservations
       const bookingGroups = new Map<string, any>();
       
@@ -54,29 +65,11 @@ export default function Dashboard() {
         }
       });
 
-      // Count unique upcoming bookings and calculate monthly revenue
+      // Count unique upcoming bookings
       bookingGroups.forEach((booking, key) => {
         const sortedDates = booking.dates.sort();
         const lastDate = parseISO(sortedDates[sortedDates.length - 1]);
-        
-        if (booking.isPast) {
-          // Calculate revenue from past bookings (per night)
-          const price = booking.bookedBy === 'airbnb' ? listing.airbnbPrice :
-                       booking.bookedBy === 'booking' ? listing.bookingPrice :
-                       listing.vrboPrice;
-          
-          // Check each date to determine which month it belongs to
-          booking.dates.forEach((dateStr: string) => {
-            const bookingDate = parseISO(dateStr);
-            
-            if (bookingDate >= firstDayThisMonth && bookingDate <= today) {
-              thisMonthRevenue += price;
-            } else if (bookingDate >= firstDayLastMonth && bookingDate <= lastDayLastMonth) {
-              lastMonthRevenue += price;
-            }
-          });
-        } else if (isAfter(lastDate, today) || format(lastDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')) {
-          // Count as upcoming booking
+        if (isAfter(lastDate, today) || format(lastDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')) {
           upcomingBookingsSet.add(key);
         }
       });
