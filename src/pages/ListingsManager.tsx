@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card } from '@/components/ui/card';
@@ -25,6 +25,16 @@ export default function ListingsManager() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Keep selected listing in sync after add/update refetches
+  useEffect(() => {
+    if (selectedListing?.id) {
+      const updated = listings.find((l) => l.id === selectedListing.id);
+      if (updated && updated !== selectedListing) {
+        setSelectedListing(updated);
+      }
+    }
+  }, [listings, selectedListing?.id, setSelectedListing]);
 
   const handlePostEverywhere = async () => {
     await fakeApiCall('/listings/post-all', { listingId: selectedListing?.id });
