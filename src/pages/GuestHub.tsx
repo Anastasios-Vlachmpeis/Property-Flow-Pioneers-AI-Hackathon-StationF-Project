@@ -15,7 +15,7 @@ import avatarPlaceholder from '@/assets/avatar-placeholder.png';
 import airbnbAvatar from '@/assets/airbnb-avatar.jpg';
 import vrboAvatar from '@/assets/vrbo-avatar.jpg';
 import { useListings } from '@/hooks/useListings';
-import { format, parseISO, isBefore, isAfter, addDays, subDays } from 'date-fns';
+import { format, parseISO, isBefore, isAfter, addDays, subDays, isValid } from 'date-fns';
 import { Chat } from '@/store/useStore';
 
 const platformIcons = {
@@ -70,6 +70,13 @@ export default function GuestHub() {
         // Generate chat for each booking
         bookingsByGuest.forEach((booking, key) => {
           const bookingDate = parseISO(booking.checkIn);
+          
+          // Skip invalid dates
+          if (!isValid(bookingDate)) {
+            console.warn(`Invalid date for booking: ${booking.checkIn}`);
+            return;
+          }
+          
           const isPast = booking.isPast || isBefore(bookingDate, today);
           const isUpcoming = isAfter(bookingDate, today);
           
