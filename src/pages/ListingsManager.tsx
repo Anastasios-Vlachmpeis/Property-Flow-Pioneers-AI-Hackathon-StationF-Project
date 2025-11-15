@@ -122,8 +122,9 @@ export default function ListingsManager() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
         {/* Listings Table */}
-        <Card className="lg:col-span-2 p-6">
+        <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">Your Listings</h3>
             <Button onClick={() => setIsAddDialogOpen(true)} size="sm">
@@ -169,6 +170,66 @@ export default function ListingsManager() {
             ))}
           </div>
         </Card>
+
+        {/* Availability Calendar */}
+        {selectedListing && (
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Availability Calendar</h3>
+            <div className="flex gap-4 mb-4 text-xs flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-[#FF385C]"></div>
+                <span>Airbnb</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-[#003580]"></div>
+                <span>Booking.com</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-[#FFB400]"></div>
+                <span>Vrbo</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-muted line-through"></div>
+                <span>Blocked</span>
+              </div>
+            </div>
+            <Calendar
+              mode="single"
+              month={calendarMonth}
+              onMonthChange={setCalendarMonth}
+              className="rounded-md border pointer-events-auto"
+              modifiers={{
+                airbnb: (date) => {
+                  const status = getDateStatus(date);
+                  return status?.bookedBy === 'airbnb';
+                },
+                booking: (date) => {
+                  const status = getDateStatus(date);
+                  return status?.bookedBy === 'booking';
+                },
+                vrbo: (date) => {
+                  const status = getDateStatus(date);
+                  return status?.bookedBy === 'vrbo';
+                },
+                blocked: (date) => {
+                  const status = getDateStatus(date);
+                  return status?.blocked === true;
+                }
+              }}
+              modifiersClassNames={{
+                airbnb: 'bg-[#FF385C] text-white hover:bg-[#FF385C]/90',
+                booking: 'bg-[#003580] text-white hover:bg-[#003580]/90',
+                vrbo: 'bg-[#FFB400] text-black hover:bg-[#FFB400]/90',
+                blocked: 'line-through bg-muted text-muted-foreground hover:bg-muted/80'
+              }}
+              onDayClick={handleDateClick}
+            />
+            <p className="text-xs text-muted-foreground mt-3">
+              Click on dates to block/unblock availability
+            </p>
+          </Card>
+        )}
+        </div>
 
         {/* Detail Panel */}
         <Card className="p-6">
@@ -272,7 +333,7 @@ export default function ListingsManager() {
                   </Button>
                 </TabsContent>
                 
-                <TabsContent value="status" className="space-y-6 mt-4">
+                <TabsContent value="status" className="space-y-3 mt-4">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-foreground">Airbnb</span>
@@ -293,62 +354,6 @@ export default function ListingsManager() {
                       </Badge>
                     </div>
                   </div>
-
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold text-foreground mb-3">Availability Calendar</h3>
-                    <div className="flex gap-4 mb-4 text-xs flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded bg-[#FF385C]"></div>
-                        <span>Airbnb</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded bg-[#003580]"></div>
-                        <span>Booking.com</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded bg-[#FFB400]"></div>
-                        <span>Vrbo</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded bg-muted line-through"></div>
-                        <span>Blocked</span>
-                      </div>
-                    </div>
-                    <Calendar
-                      mode="single"
-                      month={calendarMonth}
-                      onMonthChange={setCalendarMonth}
-                      className="rounded-md border pointer-events-auto"
-                      modifiers={{
-                        airbnb: (date) => {
-                          const status = getDateStatus(date);
-                          return status?.bookedBy === 'airbnb';
-                        },
-                        booking: (date) => {
-                          const status = getDateStatus(date);
-                          return status?.bookedBy === 'booking';
-                        },
-                        vrbo: (date) => {
-                          const status = getDateStatus(date);
-                          return status?.bookedBy === 'vrbo';
-                        },
-                        blocked: (date) => {
-                          const status = getDateStatus(date);
-                          return status?.blocked === true;
-                        }
-                      }}
-                      modifiersClassNames={{
-                        airbnb: 'bg-[#FF385C] text-white hover:bg-[#FF385C]/90',
-                        booking: 'bg-[#003580] text-white hover:bg-[#003580]/90',
-                        vrbo: 'bg-[#FFB400] text-black hover:bg-[#FFB400]/90',
-                        blocked: 'line-through bg-muted text-muted-foreground hover:bg-muted/80'
-                      }}
-                      onDayClick={handleDateClick}
-                    />
-                    <p className="text-xs text-muted-foreground mt-3">
-                      Click on dates to block/unblock availability
-                    </p>
-                  </div>
                 </TabsContent>
               </Tabs>
             </div>
@@ -359,7 +364,7 @@ export default function ListingsManager() {
             </div>
           )}
         </Card>
-      </div>
+        </div>
       )}
 
       <ListingFormDialog
