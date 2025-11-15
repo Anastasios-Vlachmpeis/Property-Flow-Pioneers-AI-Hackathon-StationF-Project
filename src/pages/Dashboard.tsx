@@ -21,8 +21,14 @@ export default function Dashboard() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    // Get first day of current and previous month
+    const firstDayThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const firstDayLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const lastDayLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    
     const upcomingBookingsSet = new Set<string>();
-    let pastRevenue = 0;
+    let thisMonthRevenue = 0;
+    let lastMonthRevenue = 0;
     const activities: Array<{ id: string; message: string; timestamp: string; }> = [];
     
     listings.forEach((listing) => {
@@ -48,7 +54,7 @@ export default function Dashboard() {
         }
       });
 
-      // Count unique upcoming bookings and calculate past revenue
+      // Count unique upcoming bookings and calculate monthly revenue
       bookingGroups.forEach((booking, key) => {
         const sortedDates = booking.dates.sort();
         const lastDate = parseISO(sortedDates[sortedDates.length - 1]);
@@ -58,13 +64,28 @@ export default function Dashboard() {
           const price = booking.bookedBy === 'airbnb' ? listing.airbnbPrice :
                        booking.bookedBy === 'booking' ? listing.bookingPrice :
                        listing.vrboPrice;
-          pastRevenue += price * booking.dates.length;
+          
+          // Check each date to determine which month it belongs to
+          booking.dates.forEach((dateStr: string) => {
+            const bookingDate = parseISO(dateStr);
+            
+            if (bookingDate >= firstDayThisMonth && bookingDate <= today) {
+              thisMonthRevenue += price;
+            } else if (bookingDate >= firstDayLastMonth && bookingDate <= lastDayLastMonth) {
+              lastMonthRevenue += price;
+            }
+          });
         } else if (isAfter(lastDate, today) || format(lastDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')) {
           // Count as upcoming booking
           upcomingBookingsSet.add(key);
         }
       });
     });
+
+    // Calculate revenue change percentage
+    const revenueChange = lastMonthRevenue > 0 
+      ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 
+      : 0;
 
     // Generate activities from listing data
     const sortedListings = [...listings].sort((a, b) => 
@@ -104,7 +125,8 @@ export default function Dashboard() {
     return {
       totalListings: listings.length,
       upcomingBookings: upcomingBookingsSet.size,
-      revenue: pastRevenue,
+      thisMonthRevenue,
+      revenueChange: revenueChange.toFixed(1),
       activities: activities.slice(0, 10)
     };
   }, [listings]);
@@ -125,9 +147,13 @@ export default function Dashboard() {
             icon={Calendar}
           />
           <KpiCard
-            title="Past Revenue"
-            value={`$${stats.revenue.toLocaleString()}`}
+            title="Revenue This Month"
+            value={`$${stats.thisMonthRevenue.toLocaleString()}`}
             icon={DollarSign}
+            trend={{ 
+              value: `${stats.revenueChange}% vs last month`, 
+              isPositive: parseFloat(stats.revenueChange) >= 0 
+            }}
           />
         </div>
 
