@@ -13,11 +13,12 @@ import { fakeApiCall } from '@/lib/mockData';
 import { toast } from 'sonner';
 import avatarPlaceholder from '@/assets/avatar-placeholder.png';
 import airbnbAvatar from '@/assets/airbnb-avatar.jpg';
+import vrboAvatar from '@/assets/vrbo-avatar.jpg';
 
 const platformIcons = {
   airbnb: airbnbAvatar,
   booking: avatarPlaceholder,
-  vrbo: '🏖️',
+  vrbo: vrboAvatar,
 };
 
 const aiSuggestions = [
@@ -126,11 +127,7 @@ export default function GuestHub() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 flex items-center justify-center">
-                      {request.platform === 'vrbo' ? (
-                        <span className="text-3xl">{platformIcons[request.platform]}</span>
-                      ) : (
-                        <img src={platformIcons[request.platform]} alt={request.platform} className="w-10 h-10 rounded-full object-cover" />
-                      )}
+                      <img src={platformIcons[request.platform]} alt={request.platform} className="w-10 h-10 rounded-full object-cover" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -219,11 +216,7 @@ export default function GuestHub() {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        {chat.platform === 'vrbo' ? (
-                          <span className="text-xl">{platformIcons[chat.platform]}</span>
-                        ) : (
-                          <img src={platformIcons[chat.platform]} alt={chat.platform} className="w-6 h-6 rounded-full object-cover" />
-                        )}
+                        <img src={platformIcons[chat.platform]} alt={chat.platform} className="w-6 h-6 rounded-full object-cover" />
                         <h4 className="font-semibold text-foreground text-sm">{chat.guestName}</h4>
                       </div>
                       <Badge variant={chat.isAuto ? 'default' : 'secondary'} className="text-xs">
@@ -245,11 +238,7 @@ export default function GuestHub() {
                     <div className="p-4 border-b border-border">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          {selectedChat.platform === 'vrbo' ? (
-                            <span className="text-2xl">{platformIcons[selectedChat.platform]}</span>
-                          ) : (
-                            <img src={platformIcons[selectedChat.platform]} alt={selectedChat.platform} className="w-8 h-8 rounded-full object-cover" />
-                          )}
+                          <img src={platformIcons[selectedChat.platform]} alt={selectedChat.platform} className="w-8 h-8 rounded-full object-cover" />
                           <div>
                             <h3 className="font-semibold text-foreground">{selectedChat.guestName}</h3>
                             <p className="text-xs text-muted-foreground capitalize">{selectedChat.platform}</p>
