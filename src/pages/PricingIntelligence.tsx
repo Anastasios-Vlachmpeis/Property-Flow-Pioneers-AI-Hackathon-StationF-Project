@@ -6,18 +6,25 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { TrendingUp, CheckCircle, MapPin, Star, ChevronDown } from 'lucide-react';
 import { useStore } from '@/store/useStore';
+import { useListings } from '@/hooks/useListings';
 import { mockPricingData, fakeApiCall } from '@/lib/mockData';
 import { toast } from 'sonner';
 
 export default function PricingIntelligence() {
-  const { selectedListing, listings, setSelectedListing, pricingData, setPricingData } = useStore();
+  const { selectedListing, setSelectedListing, pricingData, setPricingData } = useStore();
+  const { listings, loading } = useListings();
   const [isListingDialogOpen, setIsListingDialogOpen] = useState(false);
 
   useEffect(() => {
+    // Auto-select first listing if none selected and listings are available
+    if (!selectedListing && listings.length > 0 && !loading) {
+      setSelectedListing(listings[0]);
+    }
+    
     if (selectedListing) {
       setPricingData(mockPricingData);
     }
-  }, [selectedListing]);
+  }, [selectedListing, listings, loading]);
 
   const handleApplyPrice = async () => {
     await fakeApiCall('/pricing/apply', {

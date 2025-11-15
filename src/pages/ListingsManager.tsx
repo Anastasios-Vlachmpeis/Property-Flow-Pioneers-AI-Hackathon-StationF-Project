@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Upload, RefreshCw, Sparkles, Building2, Plus, Pencil, ArrowRight } from 'lucide-react';
+import { useListings } from '@/hooks/useListings';
 import { useStore } from '@/store/useStore';
 import { fakeApiCall } from '@/lib/mockData';
 import { toast } from 'sonner';
@@ -19,7 +20,8 @@ const statusColors = {
 };
 
 export default function ListingsManager() {
-  const { listings, selectedListing, setSelectedListing, addListing, updateListing, pricingData } = useStore();
+  const { listings, loading, addListing: dbAddListing, updateListing: dbUpdateListing } = useListings();
+  const { selectedListing, setSelectedListing, pricingData } = useStore();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -40,18 +42,33 @@ export default function ListingsManager() {
   };
 
   const handleAddListing = async (listing: Partial<Listing>) => {
-    await fakeApiCall('/listings/create', listing);
-    addListing(listing);
+    try {
+      await dbAddListing(listing as Omit<Listing, 'id'>);
+      setIsAddDialogOpen(false);
+    } catch (error) {
+      // Error already handled in useListings hook
+    }
   };
 
   const handleUpdateListing = async (listing: Partial<Listing>) => {
-    await fakeApiCall('/listings/update', listing);
-    updateListing(listing);
+    if (!selectedListing?.id) return;
+    
+    try {
+      await dbUpdateListing(selectedListing.id, listing);
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      // Error already handled in useListings hook
+    }
   };
 
   return (
     <AppLayout title="Listings Manager">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {loading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Listings Table */}
         <Card className="lg:col-span-2 p-6">
           <div className="flex items-center justify-between mb-4">
@@ -228,6 +245,7 @@ export default function ListingsManager() {
           )}
         </Card>
       </div>
+      )}
 
       <ListingFormDialog
         open={isAddDialogOpen}

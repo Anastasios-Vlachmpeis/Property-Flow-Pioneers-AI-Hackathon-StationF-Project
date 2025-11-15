@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      listings: {
+        Row: {
+          airbnb_price: number
+          booking_price: number
+          created_at: string
+          id: string
+          last_sync: string | null
+          location: string
+          photos: string[]
+          sync_status: string
+          thumbnail: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          vrbo_price: number
+        }
+        Insert: {
+          airbnb_price?: number
+          booking_price?: number
+          created_at?: string
+          id?: string
+          last_sync?: string | null
+          location: string
+          photos?: string[]
+          sync_status?: string
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          vrbo_price?: number
+        }
+        Update: {
+          airbnb_price?: number
+          booking_price?: number
+          created_at?: string
+          id?: string
+          last_sync?: string | null
+          location?: string
+          photos?: string[]
+          sync_status?: string
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          vrbo_price?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
