@@ -155,23 +155,23 @@ export default function Dashboard() {
 
         {/* Recent Activity */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Recent Activity</h3>
+          <h3 className="text-xl font-serif font-semibold text-foreground mb-4">Recent Activity</h3>
           {stats.activities.length > 0 ? (
             <div className="space-y-4">
               {stats.activities.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-3 pb-4 border-b border-border last:border-0">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <TrendingUp className="h-4 w-4 text-primary" />
+                  <div className="p-2 rounded-md bg-muted">
+                    <TrendingUp className="h-4 w-4 text-foreground" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{activity.message}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{activity.timestamp}</p>
+                    <p className="text-sm font-sans font-medium text-foreground">{activity.message}</p>
+                    <p className="text-xs font-sans text-muted-foreground mt-1">{activity.timestamp}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No recent activity</p>
+            <p className="text-sm font-sans text-muted-foreground">No recent activity</p>
           )}
         </Card>
       </div>
