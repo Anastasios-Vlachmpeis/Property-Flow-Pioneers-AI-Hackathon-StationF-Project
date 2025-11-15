@@ -14,6 +14,12 @@ import { toast } from 'sonner';
 import { ListingFormDialog } from '@/components/ListingFormDialog';
 import { Listing } from '@/store/useStore';
 import { format } from 'date-fns';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const statusColors = {
   synced: 'bg-success text-success-foreground',
@@ -164,6 +170,31 @@ export default function ListingsManager() {
     return selectedListing.availability.find(a => a.date === dateStr);
   };
 
+  const getTooltipContent = (date: Date) => {
+    const status = getDateStatus(date);
+    if (!status) return null;
+
+    if (status.blocked) {
+      return <div className="text-xs">Blocked by owner</div>;
+    }
+
+    if (status.bookedBy && status.guestName) {
+      const platformName = status.bookedBy === 'airbnb' ? 'Airbnb' : 
+                          status.bookedBy === 'booking' ? 'Booking.com' : 'Vrbo';
+      return (
+        <div className="text-xs space-y-1">
+          <div className="font-semibold">{status.guestName}</div>
+          <div className="text-muted-foreground">{platformName}</div>
+          <div className="text-muted-foreground">{status.guests} guests</div>
+          <div className="text-muted-foreground">Check-in: {status.checkIn}</div>
+          <div className="text-muted-foreground">Check-out: {status.checkOut}</div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <AppLayout title="Listings Manager">
       {loading ? (
@@ -243,41 +274,68 @@ export default function ListingsManager() {
                 <span>Blocked</span>
               </div>
             </div>
-            <Calendar
-              mode="single"
-              month={calendarMonth}
-              onMonthChange={setCalendarMonth}
-              className="rounded-md border pointer-events-auto"
-              modifiers={{
-                airbnb: (date) => {
-                  const status = getDateStatus(date);
-                  return status?.bookedBy === 'airbnb';
-                },
-                booking: (date) => {
-                  const status = getDateStatus(date);
-                  return status?.bookedBy === 'booking';
-                },
-                vrbo: (date) => {
-                  const status = getDateStatus(date);
-                  return status?.bookedBy === 'vrbo';
-                },
-                blocked: (date) => {
-                  const status = getDateStatus(date);
-                  return status?.blocked === true;
-                },
-                rangeStart: (date) => {
-                  return rangeStart !== null && format(date, 'yyyy-MM-dd') === format(rangeStart, 'yyyy-MM-dd');
-                }
-              }}
-              modifiersClassNames={{
-                airbnb: 'bg-[#FF385C] text-white hover:bg-[#FF385C]/90',
-                booking: 'bg-[#003580] text-white hover:bg-[#003580]/90',
-                vrbo: 'bg-[#FFB400] text-black hover:bg-[#FFB400]/90',
-                blocked: 'relative bg-muted text-muted-foreground hover:bg-muted/80 after:content-[""] after:absolute after:left-0 after:top-1/2 after:w-full after:h-[2px] after:bg-destructive after:-translate-y-1/2',
-                rangeStart: 'ring-2 ring-primary ring-offset-2'
-              }}
-              onDayClick={handleDateClick}
-            />
+            <TooltipProvider>
+              <Calendar
+                mode="single"
+                month={calendarMonth}
+                onMonthChange={setCalendarMonth}
+                className="rounded-md border pointer-events-auto"
+                modifiers={{
+                  airbnb: (date) => {
+                    const status = getDateStatus(date);
+                    return status?.bookedBy === 'airbnb';
+                  },
+                  booking: (date) => {
+                    const status = getDateStatus(date);
+                    return status?.bookedBy === 'booking';
+                  },
+                  vrbo: (date) => {
+                    const status = getDateStatus(date);
+                    return status?.bookedBy === 'vrbo';
+                  },
+                  blocked: (date) => {
+                    const status = getDateStatus(date);
+                    return status?.blocked === true;
+                  },
+                  rangeStart: (date) => {
+                    return rangeStart !== null && format(date, 'yyyy-MM-dd') === format(rangeStart, 'yyyy-MM-dd');
+                  },
+                  hasTooltip: (date) => {
+                    return !!getTooltipContent(date);
+                  }
+                }}
+                modifiersClassNames={{
+                  airbnb: 'bg-[#FF385C] text-white hover:bg-[#FF385C]/90',
+                  booking: 'bg-[#003580] text-white hover:bg-[#003580]/90',
+                  vrbo: 'bg-[#FFB400] text-black hover:bg-[#FFB400]/90',
+                  blocked: 'relative bg-muted text-muted-foreground hover:bg-muted/80 after:content-[""] after:absolute after:left-0 after:top-1/2 after:w-full after:h-[2px] after:bg-destructive after:-translate-y-1/2',
+                  rangeStart: 'ring-2 ring-primary ring-offset-2'
+                }}
+                onDayClick={handleDateClick}
+                components={{
+                  DayContent: ({ date }) => {
+                    const tooltipContent = getTooltipContent(date);
+                    
+                    if (tooltipContent) {
+                      return (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="w-full h-full flex items-center justify-center">
+                              {date.getDate()}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-popover border">
+                            {tooltipContent}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    }
+                    
+                    return <>{date.getDate()}</>;
+                  }
+                }}
+              />
+            </TooltipProvider>
             <p className="text-xs text-muted-foreground mt-3">
               Click two dates to block/unblock a range
             </p>
