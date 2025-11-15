@@ -14,6 +14,9 @@ import { toast } from 'sonner';
 import avatarPlaceholder from '@/assets/avatar-placeholder.png';
 import airbnbAvatar from '@/assets/airbnb-avatar.jpg';
 import vrboAvatar from '@/assets/vrbo-avatar.jpg';
+import { useListings } from '@/hooks/useListings';
+import { format, parseISO, isBefore, isAfter, addDays, subDays } from 'date-fns';
+import { Chat } from '@/store/useStore';
 
 const platformIcons = {
   airbnb: airbnbAvatar,
@@ -28,11 +31,132 @@ const aiSuggestions = [
 ];
 
 export default function GuestHub() {
-  const { chats, selectedChat, setSelectedChat, bookingRequests, setBookingRequests } = useStore();
+  const { chats, setChats, selectedChat, setSelectedChat, bookingRequests, setBookingRequests } = useStore();
+  const { listings } = useListings();
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
   const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
+    // Generate chats from actual bookings
+    if (listings.length > 0) {
+      const generatedChats: Chat[] = [];
+      const today = new Date();
+      
+      listings.forEach((listing) => {
+        if (!listing.availability) return;
+        
+        // Group bookings by guest
+        const bookingsByGuest = new Map<string, any>();
+        
+        listing.availability.forEach((avail) => {
+          if (avail.bookedBy && avail.guestName) {
+            const key = `${avail.guestName}-${avail.bookedBy}`;
+            if (!bookingsByGuest.has(key)) {
+              bookingsByGuest.set(key, {
+                guestName: avail.guestName,
+                platform: avail.bookedBy,
+                dates: [avail.date],
+                isPast: avail.isPast,
+                checkIn: avail.checkIn || avail.date,
+                guests: avail.guests || 2,
+                propertyTitle: listing.title
+              });
+            } else {
+              bookingsByGuest.get(key).dates.push(avail.date);
+            }
+          }
+        });
+        
+        // Generate chat for each booking
+        bookingsByGuest.forEach((booking, key) => {
+          const bookingDate = parseISO(booking.checkIn);
+          const isPast = booking.isPast || isBefore(bookingDate, today);
+          const isUpcoming = isAfter(bookingDate, today);
+          
+          let messages: { text: string; sender: 'guest' | 'host'; timestamp: string }[] = [];
+          let preview = '';
+          
+          if (isPast) {
+            // Past booking - thank you messages
+            messages = [
+              { 
+                text: `Thank you so much for hosting us at ${booking.propertyTitle}! We had a wonderful time.`, 
+                sender: 'guest', 
+                timestamp: format(addDays(bookingDate, booking.dates.length), 'MMM dd, h:mm a')
+              },
+              { 
+                text: `Thank you for being such wonderful guests! We're so glad you enjoyed your stay. You're always welcome back!`, 
+                sender: 'host', 
+                timestamp: format(addDays(bookingDate, booking.dates.length + 1), 'MMM dd, h:mm a')
+              },
+            ];
+            preview = 'Thank you for the wonderful stay!';
+          } else if (isUpcoming) {
+            // Upcoming booking - pre-arrival questions
+            const daysUntil = Math.ceil((bookingDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            
+            if (daysUntil <= 7) {
+              messages = [
+                { 
+                  text: `Hi! We're excited about our stay at ${booking.propertyTitle}. What time is check-in?`, 
+                  sender: 'guest', 
+                  timestamp: format(subDays(bookingDate, 3), 'MMM dd, h:mm a')
+                },
+                { 
+                  text: `Welcome! Check-in is at 3:00 PM. I'll send you the access code and detailed instructions 24 hours before your arrival. Is there anything specific you'd like to know?`, 
+                  sender: 'host', 
+                  timestamp: format(subDays(bookingDate, 3), 'MMM dd, h:mm a')
+                },
+                { 
+                  text: `Perfect, thank you! Is parking available?`, 
+                  sender: 'guest', 
+                  timestamp: format(subDays(bookingDate, 2), 'MMM dd, h:mm a')
+                },
+                { 
+                  text: `Yes, free parking is included! There's a dedicated spot right in front of the property. You'll find the parking details in the check-in instructions.`, 
+                  sender: 'host', 
+                  timestamp: format(subDays(bookingDate, 2), 'MMM dd, h:mm a')
+                },
+              ];
+              preview = 'What time is check-in?';
+            } else {
+              messages = [
+                { 
+                  text: `Hi! Just wanted to confirm our reservation for ${format(bookingDate, 'MMMM dd')} at ${booking.propertyTitle}. We're ${booking.guests} guests. Looking forward to it!`, 
+                  sender: 'guest', 
+                  timestamp: format(subDays(bookingDate, 14), 'MMM dd, h:mm a')
+                },
+                { 
+                  text: `Yes, your reservation is confirmed! We're looking forward to hosting you. I'll send check-in instructions about 3 days before your arrival. Feel free to reach out if you have any questions!`, 
+                  sender: 'host', 
+                  timestamp: format(subDays(bookingDate, 14), 'MMM dd, h:mm a')
+                },
+              ];
+              preview = 'Just wanted to confirm our reservation';
+            }
+          }
+          
+          if (messages.length > 0) {
+            generatedChats.push({
+              id: `chat-${key}`,
+              guestName: booking.guestName,
+              platform: booking.platform,
+              preview,
+              isAuto: true,
+              messages
+            });
+          }
+        });
+      });
+      
+      if (generatedChats.length > 0) {
+        setChats(generatedChats);
+        if (!selectedChat && generatedChats.length > 0) {
+          setSelectedChat(generatedChats[0]);
+        }
+      }
+    }
+    
     // Load mock booking requests
     setBookingRequests([
       {
@@ -72,7 +196,7 @@ export default function GuestHub() {
         platformSpecific: { verified: true },
       },
     ]);
-  }, [setBookingRequests]);
+  }, [listings, setChats, setBookingRequests, selectedChat, setSelectedChat]);
 
   const handleSendMessage = async () => {
     await fakeApiCall('/messages/send', { chatId: selectedChat?.id, message: replyText });
