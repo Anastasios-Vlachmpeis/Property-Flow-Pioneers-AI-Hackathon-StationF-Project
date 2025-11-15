@@ -17,6 +17,8 @@ export type Database = {
       listings: {
         Row: {
           airbnb_price: number
+          bedrooms: number
+          beds: number
           booking_price: number
           created_at: string
           id: string
@@ -33,6 +35,8 @@ export type Database = {
         }
         Insert: {
           airbnb_price?: number
+          bedrooms?: number
+          beds?: number
           booking_price?: number
           created_at?: string
           id?: string
@@ -49,6 +53,8 @@ export type Database = {
         }
         Update: {
           airbnb_price?: number
+          bedrooms?: number
+          beds?: number
           booking_price?: number
           created_at?: string
           id?: string
