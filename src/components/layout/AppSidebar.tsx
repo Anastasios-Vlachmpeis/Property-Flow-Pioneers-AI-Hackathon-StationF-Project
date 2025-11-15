@@ -30,8 +30,8 @@ export function AppSidebar() {
   return (
     <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col border-r border-sidebar-border">
       <div className="p-6 border-b border-sidebar-border">
-        <h1 className="text-xl font-bold text-sidebar-primary">PropManager</h1>
-        <p className="text-xs text-sidebar-foreground/60 mt-1">Automation Platform</p>
+        <h1 className="text-2xl font-serif font-bold text-sidebar-primary">PropManager</h1>
+        <p className="text-xs text-sidebar-foreground/70 mt-1 font-sans">Automation Platform</p>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
@@ -41,7 +41,7 @@ export function AppSidebar() {
               <div>
                 <button
                   onClick={() => toggleExpanded(item.name)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-sans font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <item.icon className="h-5 w-5" />
@@ -60,7 +60,7 @@ export function AppSidebar() {
                       <NavLink
                         key={child.href}
                         to={child.href}
-                        className="block px-3 py-2 rounded-lg text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+                        className="block px-3 py-2 rounded-md text-sm font-sans text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
                         activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
                       >
                         {child.name}
@@ -73,7 +73,7 @@ export function AppSidebar() {
               <NavLink
                 to={item.href}
                 end
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-sans font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
                 activeClassName="bg-sidebar-accent text-sidebar-primary"
               >
                 <item.icon className="h-5 w-5" />
@@ -85,7 +85,7 @@ export function AppSidebar() {
       </nav>
 
       <div className="p-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-2 text-xs text-sidebar-foreground/60">
+        <div className="flex items-center gap-2 text-xs font-sans text-sidebar-foreground/70">
           <div className="h-2 w-2 bg-success rounded-full animate-pulse" />
           <span>All systems operational</span>
         </div>
