@@ -9,7 +9,6 @@ import PricingIntelligence from "./pages/PricingIntelligence";
 import GuestHub from "./pages/GuestHub";
 import Auth from "./pages/Auth";
 import OperationsCleaning from "./pages/OperationsCleaning";
-import OperationsOffboarding from "./pages/OperationsOffboarding";
 import Integrations from "./pages/Integrations";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -30,7 +29,6 @@ const App = () => (
           <Route path="/guest-hub" element={<ProtectedRoute><GuestHub /></ProtectedRoute>} />
           
           <Route path="/operations/cleaning" element={<ProtectedRoute><OperationsCleaning /></ProtectedRoute>} />
-          <Route path="/operations/offboarding" element={<ProtectedRoute><OperationsOffboarding /></ProtectedRoute>} />
           <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>

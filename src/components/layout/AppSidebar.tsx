@@ -14,7 +14,6 @@ const navigation = [
     icon: Settings,
     children: [
       { name: 'Cleaning', href: '/operations/cleaning' },
-      { name: 'Offboarding', href: '/operations/offboarding' },
     ],
   },
 ];
