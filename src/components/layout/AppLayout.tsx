@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { AppSidebar } from './AppSidebar';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -8,6 +10,8 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children, title }: AppLayoutProps) {
+  const { signOut } = useAuth();
+  
   return (
     <div className="flex min-h-screen w-full bg-background">
       <AppSidebar />
@@ -21,6 +25,10 @@ export function AppLayout({ children, title }: AppLayoutProps) {
               <RefreshCw className="h-4 w-4" />
               <span className="font-medium">Synced</span>
             </div>
+            <Button variant="outline" size="sm" onClick={signOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
           </div>
         </header>
 

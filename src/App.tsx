@@ -7,10 +7,11 @@ import Dashboard from "./pages/Dashboard";
 import ListingsManager from "./pages/ListingsManager";
 import PricingIntelligence from "./pages/PricingIntelligence";
 import MessagingHub from "./pages/MessagingHub";
-
+import Auth from "./pages/Auth";
 import OperationsCleaning from "./pages/OperationsCleaning";
 import OperationsOffboarding from "./pages/OperationsOffboarding";
 import NotFound from "./pages/NotFound";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -21,13 +22,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/listings" element={<ListingsManager />} />
-          <Route path="/pricing" element={<PricingIntelligence />} />
-          <Route path="/messaging" element={<MessagingHub />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/listings" element={<ProtectedRoute><ListingsManager /></ProtectedRoute>} />
+          <Route path="/pricing" element={<ProtectedRoute><PricingIntelligence /></ProtectedRoute>} />
+          <Route path="/messaging" element={<ProtectedRoute><MessagingHub /></ProtectedRoute>} />
           
-          <Route path="/operations/cleaning" element={<OperationsCleaning />} />
-          <Route path="/operations/offboarding" element={<OperationsOffboarding />} />
+          <Route path="/operations/cleaning" element={<ProtectedRoute><OperationsCleaning /></ProtectedRoute>} />
+          <Route path="/operations/offboarding" element={<ProtectedRoute><OperationsOffboarding /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
