@@ -2,7 +2,7 @@
 
 A comprehensive property management automation platform for vacation rentals. This full-stack application combines a modern React dashboard with a FastAPI backend featuring autonomous AI agents to streamline listing management, pricing optimization, guest communication, and operational workflows.
 
-## 🎯 Overview
+## Overview
 
 Property Flow Pioneers automates the end-to-end management of vacation rental properties across multiple platforms (Airbnb, Booking.com, Vrbo). The platform provides:
 
@@ -13,7 +13,7 @@ Property Flow Pioneers automates the end-to-end management of vacation rental pr
 - **Multi-Platform Integration** — Sync listings and availability across Airbnb, Booking.com, and Vrbo
 - **Autonomous Agents** — Intelligent agents that handle pricing, calendar sync, guest communication, operations, and review management
 
-## 🏗️ Architecture
+## Architecture
 
 The project consists of three main components:
 
@@ -38,7 +38,7 @@ The project consists of three main components:
 - **Database**: PostgreSQL 15
 - **Cache/Queue**: Redis 7
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -136,7 +136,7 @@ npm run dev
 
    Frontend available at `http://localhost:8080`
 
-## 📋 Environment Variables
+## Environment Variables
 
 ### Backend (`backend/.env`)
 
@@ -168,7 +168,7 @@ PORT=8000
 
 The frontend uses Supabase for authentication. Configure Supabase credentials in your environment or through the Supabase client configuration.
 
-## 🧩 Project Structure
+## Project Structure
 
 ```
 Property-Flow-Pioneers-AI-Hackathon-StationF-Project/
@@ -229,7 +229,7 @@ Property-Flow-Pioneers-AI-Hackathon-StationF-Project/
 └── README.md
 ```
 
-## 🤖 Autonomous Agents
+## Autonomous Agents
 
 The backend includes five autonomous agents that automate various property management tasks:
 
@@ -280,7 +280,7 @@ The backend includes five autonomous agents that automate various property manag
 ### AI Proxy
 - `POST /api/v1/ai/proxy` — Proxy requests to LLM providers
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Build Backend Image
 
@@ -363,7 +363,7 @@ npm run lint
 2. **New Page**: Add component to `src/pages/` and route in `src/App.tsx`
 3. **New API Endpoint**: Add to `backend/app/api/v1/` and register in `backend/app/main.py`
 
-## 📦 Technologies
+## Technologies
 
 ### Frontend
 - **React** 18.3
@@ -391,7 +391,7 @@ npm run lint
 - **n8n** — Workflow automation
 - **Docker** — Containerization
 
-## 🔐 Security Notes
+## Security Notes
 
 - Keep all API keys and secrets in `.env` files (never commit them)
 - Use environment variables in production deployments
@@ -409,7 +409,7 @@ npm run lint
 - [ ] Add agent trigger endpoints for manual execution
 - [ ] Enhance error handling and logging
 
-## 🤝 Contributing
+## Contributing
 
 1. Create a feature branch from `main`
 2. Make your changes
@@ -418,11 +418,11 @@ npm run lint
 
 **Important**: Never commit secrets or API keys. Always use `.env` files and ensure they're in `.gitignore`.
 
-## 📄 License
+## License
 
 [Add your license here]
 
-## 🔗 Links
+## Links
 
 - **Lovable Project**: https://lovable.dev/projects/e5dafb19-5c17-4bd5-8044-57ef2bec245e
 - **API Documentation**: `http://localhost:8000/docs` (Swagger UI when backend is running)
