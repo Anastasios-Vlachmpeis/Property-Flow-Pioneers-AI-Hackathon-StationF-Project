@@ -258,7 +258,7 @@ The backend includes five autonomous agents that automate various property manag
 - Sends review prompts via n8n
 - Tracks review status
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Health Check
 - `GET /health` — Service health status
@@ -305,7 +305,7 @@ docker run --rm \
   property-flow-backend:latest
 ```
 
-## ☁️ Cloud Deployment
+## Cloud Deployment
 
 ### Backend (Google Cloud Run)
 
@@ -338,7 +338,7 @@ For Lovable deployment:
 1. Open [Lovable Project](https://lovable.dev/projects/e5dafb19-5c17-4bd5-8044-57ef2bec245e)
 2. Click **Share → Publish**
 
-## 🛠️ Development
+## Development
 
 ### Running Tests
 
@@ -399,7 +399,7 @@ npm run lint
 - Rotate API keys regularly
 - Use HTTPS in production
 
-## 📝 Next Steps
+## Next Steps
 
 - [ ] Implement real OAuth flows for platform integrations (Airbnb, Booking.com, Vrbo)
 - [ ] Add Celery workers and persistent queue for agent tasks
