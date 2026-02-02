@@ -51,7 +51,7 @@ The project consists of three main components:
 
 1. **Clone the repository**:
    ```bash
-git clone <YOUR_GIT_URL>
+   git clone <YOUR_GIT_URL>
    cd Property-Flow-Pioneers-AI-Hackathon-StationF-Project
    ```
 
