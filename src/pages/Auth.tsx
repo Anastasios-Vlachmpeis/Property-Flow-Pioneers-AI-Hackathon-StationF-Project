@@ -57,7 +57,17 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      {/* Demo credentials box */}
+      <div className="fixed bottom-4 left-4 bg-muted/80 backdrop-blur-sm border border-border rounded-lg p-3 text-sm max-w-xs">
+        <p className="font-medium text-foreground mb-1">Demo Credentials</p>
+        <p className="text-muted-foreground text-xs">
+          <span className="font-mono">talostestacc@gmail.com</span>
+          <br />
+          <span className="font-mono">1234567890</span>
+        </p>
+      </div>
+      
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Welcome</CardTitle>
